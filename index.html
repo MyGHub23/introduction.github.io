@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Introduction (10 Points)</title>
+
+  <style>
+    * {
+      box-sizing: border-box
+    }
+
+    :root {
+      --bg: #e0f7fa;
+      --card: #fff;
+      --text: #0d47a1;
+      --active: #fff9c4;
+      --border: #ff5252;
+      --container-bg: #d5eecb;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #e3f2fd;
+      --active: #2e7d32;
+      --border: #ff9800;
+      --container-bg: #1c1c1c;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      padding: 6px;
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+      background: var(--container-bg);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .2);
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, #42a5f5, #66bb6a);
+      border-radius: 12px;
+      padding: 8px;
+      text-align: center;
+      position: relative;
+    }
+
+    #appTitle {
+      background: #fff176;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    #AudioBtn {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      width: 26px;
+      cursor: pointer;
+    }
+
+    .form-wrapper {
+      margin-top: 6px;
+      padding: 6px;
+      border-radius: 12px;
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 4px;
+      /* ↓ reduced from 8px */
+      padding: 3px 2px;
+      /* ↓ reduced from 6px 4px */
+      border-bottom: 1px dashed #b2dfdb;
+      cursor: pointer;
+    }
+
+    .row.active {
+      background: var(--active)
+    }
+
+    .num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00c853, #64dd17);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .row.active .num {
+      animation: pulse 1s infinite
+    }
+
+    @keyframes pulse {
+      50% {
+        transform: scale(1.15)
+      }
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 1px;
+      /* ↓ reduce gap */
+    }
+
+
+    textarea {
+      width: 100%;
+      min-height: 32px;
+      /* ↓ slightly shorter */
+      padding: 5px;
+      /* ↓ reduced padding */
+      border-radius: 8px;
+      border: 1px solid #90caf9;
+      font-size: 14px;
+      color: #1f0594;
+      /* yellow text */
+    }
+
+    .speech-box {
+      display: none;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 8px;
+      border-radius: 8px;
+      background: #fffde7;
+      border: 1px solid #ffca28;
+      color: #a10d4d;
+      /* blue text */
+    }
+
+    .word {
+      padding: 0 3px;
+      border-radius: 4px;
+    }
+
+    .word.active {
+      background: #ffeb3b;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header-section">
+      <span id="appTitle">Self-Introduction (10 Points)</span>
+      <img id="AudioBtn" src="images/audiooff.png">
+    </div>
+
+    <div class="form-wrapper" id="formWrapper"></div>
+
+    <div class="footer">
+      Created by <b style="color:#ff9800">Abu Momen</b> © 2026
+    </div>
+
+  </div>
+
+  <script>
+    const labels = [
+      "Polite greeting", "Full Name", "Class and School", "Address",
+      "Family", "Hobbies", "Favorite Subject", "Aim in life",
+      "Good qualities", "Closing"
+    ];
+
+    const defaults = [
+      "Good morning, everyone!",
+      "My name is Rahim Uddin.",
+      "I study in Class 8 at Madarganj MB High School in the district of Thakurgaon.",
+      "I live in a village called Madarganj in the district of Thakurgaon.",
+      "There are four members in my family. My father is a teacher, my mother is a homemaker, and I have one elder brother.",
+      "In my free time, I like to read books and play football.",
+      "My favorite subject is Mathematics because I enjoy solving problems.",
+      "My aim in life is to become an engineer.",
+      "I am punctual, honest, and disciplined. I like to help others.",
+      "That’s all about me. Thank you for listening."
+    ];
+
+    const form = document.getElementById("formWrapper");
+
+    labels.forEach((l, i) => {
+      form.innerHTML += `
+  <div class="row" data-i="${i}">
+    <div class="num">${i + 1}</div>
+    <div>
+      <label>${l}:</label>
+      <textarea>${defaults[i]}</textarea>
+      <div class="speech-box"></div>
+    </div>
+  </div>`;
+    });
+
+    const rows = [...document.querySelectorAll(".row")];
+    const AudioBtn = document.getElementById("AudioBtn");
+
+    let audio = false;
+
+    AudioBtn.onclick = () => {
+      audio = !audio;
+      AudioBtn.src = audio ? "images/audio.png" : "images/audiooff.png";
+      if (audio) speakAll();
+      else speechSynthesis.cancel();
+    };
+
+    function speakPoint(row, next) {
+      const textarea = row.querySelector("textarea");
+      const box = row.querySelector(".speech-box");
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      rows.forEach(r => {
+        r.classList.remove("active");
+        r.querySelector(".speech-box").style.display = "none";
+        r.querySelector("textarea").style.display = "block";
+      });
+
+      row.classList.add("active");
+      textarea.style.display = "none";
+      box.style.display = "block";
+
+      const words = text.split(" ");
+      box.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(" ");
+      const spans = [...box.querySelectorAll(".word")];
+
+      let idx = 0;
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.8; u.lang = "en-US";
+
+      u.onboundary = e => {
+        if (e.name === "word" && spans[idx]) {
+          spans.forEach(s => s.classList.remove("active"));
+          spans[idx].classList.add("active");
+          idx++;
+        }
+      };
+
+      u.onend = () => {
+        setTimeout(() => {
+          box.style.display = "none";
+          textarea.style.display = "block";
+          row.classList.remove("active");
+          next && next();
+        }, 600);
+      };
+
+      speechSynthesis.speak(u);
+    }
+
+    function speakAll() {
+      let i = 0;
+      function next() {
+        if (i >= rows.length) return;
+        speakPoint(rows[i], () => { i++; next() });
+      }
+      next();
+    }
+
+    form.addEventListener("click", e => {
+      if (!audio) return;
+      const row = e.target.closest(".row");
+      if (row) speakPoint(row);
+    });
+  </script>
+
+</body>
+
+</html>
